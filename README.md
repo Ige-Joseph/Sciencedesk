@@ -29,7 +29,7 @@
 ### Installation
 ```bash
 # Clone repository
-git clone https://github.com/YOUR-USERNAME/sciencedesk-ai-agent.git
+git clone https://github.com/Ige-Joseph/sciencedesk-ai-agent.git
 cd sciencedesk-ai-agent
 
 # Setup virtual environment
