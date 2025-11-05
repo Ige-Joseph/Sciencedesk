@@ -226,7 +226,7 @@ MIT License - see [LICENSE](LICENSE) file
 ## 👨‍💻 Author
 
 **Your Name**
-- GitHub: [@yourusername](https://github.com/Ige-Joseph/Sciencedesk)
+- GitHub: [@Ige-Joseph](https://github.com/Ige-Joseph/Sciencedesk)
 - Built for [HNG Internship](https://hng.tech) Stage 3 Backend
 
 ## 🙏 Acknowledgments
