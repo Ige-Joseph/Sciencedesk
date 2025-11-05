@@ -8,7 +8,6 @@ from django.conf import settings
 
 
 
-# Configure Gemini
 genai.configure(api_key=settings.GEMINI_API_KEY)
 
 
@@ -18,14 +17,16 @@ def sciencedesk_agent(request):
     ScienceDesk - Universal Scientific Assistant
     Handles ALL science/math questions using Gemini AI
     """
+    artifact_id = str(uuid.uuid4())
+    
     try:
-        # Get the incoming A2A request
+        
         data = request.data
         request_id = data.get("id")
         user_message = data['params']['message']['parts'][0]['text']
         task_id = data['params']['message'].get('taskId', str(uuid.uuid4()))
         
-        # Send to Gemini with scientific context
+        
         model = genai.GenerativeModel('gemini-2.0-flash-exp')
         
         prompt = f"""You are ScienceDesk, a helpful scientific assistant.
@@ -42,11 +43,11 @@ Provide a clear, accurate answer. You can handle:
 Be concise but thorough. Show formulas when relevant. Incase of empty strings
 or no text just introduce your self as such """
 
-        # Get response from Gemini
+        
         response = model.generate_content(prompt)
         answer = response.text
         
-        # Build A2A response
+        
         return Response({
             "jsonrpc": "2.0",
             "id": request_id,
@@ -56,20 +57,27 @@ or no text just introduce your self as such """
                 "status": {
                     "state": "completed",
                     "timestamp": datetime.utcnow().isoformat() + "Z",
-                    "message": {
-                        "role": "agent",
-                        "parts": [{"kind": "text", "text": answer}],
-                        "kind": "message"
-                    }
                 },
-                "artifacts": [],
+                "artifacts": [
+                    {
+                        "artifactId": artifact_id,
+                        "name": "sciencedesk_response",
+                        "description": "Scientific answer from ScienceDesk",
+                        "parts": [
+                            {
+                                "kind": "text",
+                                "text": answer
+                            }
+                        ]
+                    }
+                ],
                 "history": [],
                 "kind": "task"
             }
         })
         
     except Exception as e:
-        # Error handling
+        
         error_message = f"Sorry, I encountered an error: {str(e)}\n\nPlease try rephrasing your question or ask something else!"
         
         return Response({
@@ -81,13 +89,14 @@ or no text just introduce your self as such """
                 "status": {
                     "state": "completed",
                     "timestamp": datetime.utcnow().isoformat() + "Z",
-                    "message": {
+                },
+                "artifacts": [
+                    {
                         "role": "agent",
                         "parts": [{"kind": "text", "text": error_message}],
                         "kind": "message"
                     }
-                },
-                "artifacts": [],
+                ],
                 "history": [],
                 "kind": "task"
             }
